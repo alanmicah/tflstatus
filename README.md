@@ -1,6 +1,6 @@
 # tflstatus
 
-Arrivals of specific tube stations and live disruption status for specific tube lines
+Arrivals at specific tube stations and live disruption status for specific tube lines
 
 # Currently working on
 
