@@ -2,10 +2,8 @@ import json, os, requests
 from dotenv import load_dotenv
 load_dotenv()
 
-url = "http://localhost:5050/webhook"
-
+url = os.environ.get('LOCAL_HOST')
 token = os.environ.get('LOCAL_WEBHOOK_TOKEN')
-
 headers = {
   "Content-Type": "application/json",
   "Authorization": f"Bearer {token}"

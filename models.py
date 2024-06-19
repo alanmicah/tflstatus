@@ -15,7 +15,7 @@ class LineStatus(db.Model):
   crowding = db.Column(db.JSON)
   lastupdate = db.Column(db.TIMESTAMP)
 
-class Disruptions(db.Model):
+class LineDisruptions(db.Model):
   """Line Disruptions"""
   __tablename__='line_disruptions'
   id = db.Column(db.Text, nullable=False, primary_key=True)
