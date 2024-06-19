@@ -1,14 +1,10 @@
-"""
-line_status.py created by Alan 11/05/2024
-
-Retrieve tube line status by line ID
-"""
 import os
 from dotenv import load_dotenv
 # from flask import Flask, request, jsonify
 load_dotenv()
 
 disrupt_url = os.environ.get('TFL_URL_DISRUPTIONS')
+
 tfl_api = os.environ.get('TEST_TFL_KEY')
 tfl_app_id = os.environ.get('APP_ID')
 tfl_headers = {'app_id': tfl_app_id, 'app_key': tfl_api}

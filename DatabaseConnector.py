@@ -4,11 +4,12 @@ from sqlalchemy import create_engine, func, and_, MetaData
 from sqlalchemy.orm import sessionmaker
 from models import Base
 
-POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASS = os.environ.get("POSTGRES_PASS", "postgres")
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
-POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
+# POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PASS = os.environ.get("POSTGRES_PASS")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
+POSTGRES_DB = os.environ.get("POSTGRES_DB")
 
 SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}:{}/{}".format(
     POSTGRES_USER,

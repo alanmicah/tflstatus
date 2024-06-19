@@ -1,12 +1,5 @@
-"""
-CreateTables.py created by Alan D 04/08/2022
-"""
+import json, psycopg2, os.path, os
 
-import json, psycopg2
-
-"""
-Create a tfl line status database table
-"""
 def create_line_status_table():
 
   local_connect = open('data/connect.json', 'r')
@@ -15,8 +8,7 @@ def create_line_status_table():
   try:
     #establishing the connection
     conn = psycopg2.connect(
-      database=connects[0]['database'], user=connects[0]['user'], password=connects[0]['password'], host=connects[0]['host'], port= connects[0]['port']
-    )
+      database=connects[0]['database'], user=connects[0]['user'], password=connects[0]['password'], host=connects[0]['host'], port= connects[0]['port'])
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor()
 
@@ -32,13 +24,13 @@ def create_line_status_table():
         name VARCHAR,
         modeName VARCHAR,
         disruptions VARCHAR,
-        modified TIMESTAMP,
         created TIMESTAMP,
-        lineStatuses VARCHAR,
-        routeSections VARCHAR,
-        serviceTypes VARCHAR,
-        crowding VARCHAR,
-        lastupdate TIMESTAMP,
+        modified TIMESTAMP,
+        lineStatuses JSON,
+        routeSections JSON,
+        serviceTypes JSON,
+        crowding JSON,
+        lastupdate TIMESTAMP
         )
       """
     )
@@ -80,11 +72,13 @@ def create_disruptions_table():
         (
         id VARCHAR PRIMARY KEY,
         type VARCHAR,
-        restoretime VARCHAR,
-        information VARCHAR,
-        starttime VARCHAR,
-        reports INT,
-        lastupdate TIMESTAMP
+        category VARCHAR,
+        categoryDescription VARCHAR,
+        description VARCHAR,
+        affectedRoutes JSON,
+        affectedStops JSON,
+        closureText VARCHAR,
+        lastupdated TIMESTAMP
         )
       """
     )
@@ -103,5 +97,5 @@ def create_disruptions_table():
 
 
 #----- Execute functions ------#
-create_disruptions_table()
-create_line_status_table()
+# create_disruptions_table()
+# create_line_status_table()
