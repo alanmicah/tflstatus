@@ -4,6 +4,7 @@ class LineStatus(db.Model):
   """Line Status"""
   __tablename__='line_status'
   id = db.Column(db.VARCHAR, primary_key=True)
+  type = db.Column(db.VARCHAR)
   name = db.Column(db.Text)
   modeName = db.Column(db.Text)
   disruptions = db.Column(db.Text)

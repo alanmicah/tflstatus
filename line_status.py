@@ -1,5 +1,5 @@
-import datetime, os, requests
-from extensions import db
+import datetime, json, os, requests
+from extensions import app, db
 from models import LineStatus, LineDisruptions
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, inspect
@@ -18,7 +18,10 @@ def get_line_status(api_url, line_id, tfl_headers):
   r = requests.get(url_with_custom_id, headers=tfl_headers)
   # r.status_code
   # r.head['application/json']
-  print(r.text)
+  with open('data/line_status.json', 'w') as filehandle:
+    json.dump(r.json(), filehandle)
+  print('Success data to json')
+  # upload_data(r.json())
 
 def get_line_disrupt(api_url, line_id, tfl_headers):
   url_with_line_id = api_url.format(ids=line_id)
@@ -26,9 +29,13 @@ def get_line_disrupt(api_url, line_id, tfl_headers):
   print(r.text)
 
 
-def upload_data(line_status):
+def upload_data():
+  import re
+  line_status_json = open('data/line_status.json', 'r')
+  line_status = json.load(line_status_json)
   try:
-    lineTable = db.session.query(LineStatus)
+    with app.app_context(): # Ensure the application context is pushed
+      lineTable = db.session.query(LineStatus)
   except Exception as e:
     print(e)
     return 'Failure'
@@ -43,9 +50,11 @@ def upload_data(line_status):
       linedata = LineStatus()
 
       for column in columns:
+        # `type` in database is retrieved as `$type` from api call
+        if column == 'type':
+          column = '$type'
         if column in item:
           setattr(linedata, column, item[column])
-      
       linedata.lastupdate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
       if lineTable is not None:
@@ -70,5 +79,13 @@ def upload_data(line_status):
     db.session.close()
 
 
-# get_line_status(status_url,'dlr', tfl_headers)
+# get_line_status(status_url, 'dlr', tfl_headers)
 # get_line_disrupt(disrupt_url,'dlr', tfl_headers)
+
+# The `if` statement Checks if this script is being run as the main program,
+# and so calls the functions below.
+# If this script were imported then the functions called
+# would not be executed automatically.
+if __name__ == '__main__':
+    with app.app_context():  # Push the application context to the main script
+        upload_data()

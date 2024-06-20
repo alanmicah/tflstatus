@@ -21,6 +21,7 @@ def create_line_status_table():
       CREATE TABLE LINE_STATUS
         (
         id VARCHAR PRIMARY KEY,
+        type VARCHAR,
         name VARCHAR,
         modeName VARCHAR,
         disruptions VARCHAR,

@@ -41,9 +41,9 @@ if __name__=='__main__':
 
 # @app.route('/')
 # def hello_world():
-#    return 'Hello Tutorialspoint'
+#    return 'Hello World!'
 
-# @app.route('/getreports')
+# @app.route('/getstatus')
 # async def fetch_das_db():
 #    try_live_reports()
 #    # response = DASDBData().get_all()
