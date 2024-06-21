@@ -27,9 +27,9 @@ def create_line_status_table():
         disruptions VARCHAR,
         created TIMESTAMP,
         modified TIMESTAMP,
-        lineStatuses JSON,
-        routeSections JSON,
-        serviceTypes JSON,
+        linestatuses JSON,
+        routesections JSON,
+        servicetypes JSON,
         crowding JSON,
         lastupdate TIMESTAMP
         )
@@ -74,11 +74,11 @@ def create_disruptions_table():
         id VARCHAR PRIMARY KEY,
         type VARCHAR,
         category VARCHAR,
-        categoryDescription VARCHAR,
+        categorydescription VARCHAR,
         description VARCHAR,
-        affectedRoutes JSON,
-        affectedStops JSON,
-        closureText VARCHAR,
+        affectedroutes JSON,
+        affectedstops JSON,
+        closuretext VARCHAR,
         lastupdated TIMESTAMP
         )
       """
@@ -98,5 +98,5 @@ def create_disruptions_table():
 
 
 #----- Execute functions ------#
-# create_disruptions_table()
-# create_line_status_table()
+create_disruptions_table()
+create_line_status_table()

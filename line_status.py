@@ -12,27 +12,72 @@ tfl_api = os.environ.get('TEST_TFL_KEY')
 tfl_app_id = os.environ.get('APP_ID')
 tfl_headers = {'app_id': tfl_app_id, 'app_key': tfl_api}
 
+"""
+Convert key names to lowercase letters
+"""
+# def keys_to_lowercase(obj):
+#     if isinstance(obj, dict):
+#         return {k.lower(): keys_to_lowercase(v) for k, v in obj.items()}
+#     elif isinstance(obj, list):
+#         return [keys_to_lowercase(item) for item in obj]
+#     else:
+#         return obj
+    
+def keys_to_lowercase_letters(obj):
+    import re
+    if isinstance(obj, dict):
+        new_obj = {}
+        for k, v in obj.items():
+            # Convert key to lowercase and keep only letters
+            new_key = re.sub(r'[^a-z]', '', k.lower())
+            new_obj[new_key] = keys_to_lowercase_letters(v)
+        return new_obj
+    elif isinstance(obj, list):
+        return [keys_to_lowercase_letters(item) for item in obj]
+    else:
+        return obj
+    
+"""
+Create json file
+"""
+def create_json(x, filename):
+  with open('data/'+filename+'.json', 'w') as filehandle:
+    json.dump(x, filehandle)
+
+"""
+Open and load json data
+"""
+def open_json(filename):
+  file_json = open('data/'+filename+'.json', 'r')
+  data_json = json.load(file_json)
+  return data_json
+
+"""
+Get line status
+"""
 def get_line_status(api_url, line_id, tfl_headers):
   url_with_custom_id = api_url.format(ids=line_id)
-  # print(url_with_custom_id)
   r = requests.get(url_with_custom_id, headers=tfl_headers)
-  # r.status_code
-  # r.head['application/json']
-  with open('data/line_status.json', 'w') as filehandle:
-    json.dump(r.json(), filehandle)
+  data_lower = keys_to_lowercase_letters(r.json())
+  create_json(data_lower, 'line_status')
+  # with open('data/line_status.json', 'w') as filehandle:
+  #   json.dump(data_lower, filehandle)
   print('Success data to json')
   # upload_data(r.json())
 
+"""
+Get line disruption data
+"""
 def get_line_disrupt(api_url, line_id, tfl_headers):
   url_with_line_id = api_url.format(ids=line_id)
   r = requests.get(url_with_line_id, headers=tfl_headers)
   print(r.text)
 
-
-def upload_data():
-  import re
-  line_status_json = open('data/line_status.json', 'r')
-  line_status = json.load(line_status_json)
+"""
+Upload data to database
+"""
+def upload_data(filename):
+  line_status = open_json(filename)
   try:
     with app.app_context(): # Ensure the application context is pushed
       lineTable = db.session.query(LineStatus)
@@ -51,9 +96,9 @@ def upload_data():
 
       for column in columns:
         # `type` in database is retrieved as `$type` from api call
-        if column == 'type':
-          column = '$type'
+        print(column)
         if column in item:
+          print(item[column])
           setattr(linedata, column, item[column])
       linedata.lastupdate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -78,9 +123,13 @@ def upload_data():
   finally:
     db.session.close()
 
+def open_format_json():
+  line_status = open_json('line_status')
+  data_lower = keys_to_lowercase_letters(line_status)
+  create_json(data_lower, 'line_status_lower')
+  with open('data/line_status_lower.json', 'w') as filehandle:
+    json.dump(data_lower, filehandle)
 
-# get_line_status(status_url, 'dlr', tfl_headers)
-# get_line_disrupt(disrupt_url,'dlr', tfl_headers)
 
 # The `if` statement Checks if this script is being run as the main program,
 # and so calls the functions below.
@@ -88,4 +137,5 @@ def upload_data():
 # would not be executed automatically.
 if __name__ == '__main__':
     with app.app_context():  # Push the application context to the main script
-        upload_data()
+        upload_data('line_status_lower')
+        # open_format_json()
