@@ -28,3 +28,12 @@ class LineDisruptions(db.Model):
   affectedstops = db.Column(db.JSON)
   closuretext = db.Column(db.Text)
   lastupdate = db.Column(db.TIMESTAMP)
+
+class Lines(db.Model):
+  """Lines"""
+  __tablename__='lines'
+  id = db.Column(db.VARCHAR, nullable=False, primary_key=True)
+  name = db.Column(db.Text)
+  modeName = db.Column(db.Text)
+  created = db.Column(db.TIMESTAMP)
+  updated = db.Column(db.TIMESTAMP)

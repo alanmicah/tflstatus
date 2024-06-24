@@ -98,5 +98,5 @@ def create_disruptions_table():
 
 
 #----- Execute functions ------#
-create_disruptions_table()
-create_line_status_table()
+# create_disruptions_table()
+# create_line_status_table()

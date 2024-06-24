@@ -60,8 +60,6 @@ def get_line_status(api_url, line_id, tfl_headers):
   r = requests.get(url_with_custom_id, headers=tfl_headers)
   data_lower = keys_to_lowercase_letters(r.json())
   create_json(data_lower, 'line_status')
-  # with open('data/line_status.json', 'w') as filehandle:
-  #   json.dump(data_lower, filehandle)
   print('Success data to json')
   # upload_data(r.json())
 
@@ -95,7 +93,6 @@ def upload_data(filename):
       linedata = LineStatus()
 
       for column in columns:
-        # `type` in database is retrieved as `$type` from api call
         print(column)
         if column in item:
           print(item[column])
