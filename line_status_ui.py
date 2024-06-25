@@ -1,10 +1,11 @@
-import flet as ft
+import flet
 from flet import IconButton, Page, Row, TextField, icons
-from line_status import get_line_status
+from line_status import get_status
+from extensions import app
 
-import flet as ft
+# import flet as ft
 
-def main(page: ft.Page):
+def main(page: flet.Page):
 
     page.title = "Flet example"
     page.vertical_alignment = "center"
@@ -16,31 +17,36 @@ def main(page: ft.Page):
         txt_line = dd.value
 
         # choose_line(txt_line)
-        # status = get_line_status(txt_line.lower())
-        
+        try:
+             with app.app_context(): # Ensure the application context is pushed
+                status = get_status(txt_line)
+        except Exception as e:
+            print(e)
+            status = "Failed to get line status"
+
         t.value += f"\nStatus: {status}"
         page.update()
 
-    t = ft.Text()
-    b = ft.ElevatedButton(text="Submit", on_click=button_clicked)
-    dd = ft.Dropdown(
+    t = flet.Text()
+    b = flet.ElevatedButton(text="Submit", on_click=button_clicked)
+    dd = flet.Dropdown(
         width=200,
         options=[
-            ft.dropdown.Option("DLR"),
-            ft.dropdown.Option("Central"),
-            ft.dropdown.Option("Jubilee"),
-            ft.dropdown.Option("Victoria"),
+            flet.dropdown.Option("DLR"),
+            flet.dropdown.Option("Central"),
+            flet.dropdown.Option("Jubilee"),
+            flet.dropdown.Option("Victoria"),
         ],
     )
     page.add(dd, b, t)
 
-    def choose_line(e):
-        status = get_line_status(txt_line.lower())
-        page.update()
+    # def choose_line(e):
+    #     status = get_line_status(txt_line.lower())
+    #     page.update()
     
-    page.add(
-        IconButton(tooltip="Get Line Status", on_click=choose_line)
-    )
+    # page.add(
+    #     IconButton(tooltip="Get Line Status", on_click=choose_line)
+    # )
 
     def minus_click(e):
         txt_number.value = str(int(txt_number.value) - 1)
@@ -60,4 +66,4 @@ def main(page: ft.Page):
             alignment="center",
         )
     )
-ft.app(target=main)
+flet.app(target=main)

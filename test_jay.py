@@ -1,3 +1,19 @@
+
+def test_dict():
+  dic = {}
+
+  if not dic:
+    print('Empty')
+  
+  if bool(dic):
+    print('Not empty')       
+  
+  if not bool(dic):
+    print('Emtpy')
+
+  if len(dic) > 0:
+    print('Not Empty')
+
 def test_str(word):
   import re
   pattern = re.compile('[\W_]+') 
@@ -55,5 +71,6 @@ def test_json():
       #   linedata.lastupdate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
-
-test_str('$type')
+# -----Function calls-----#
+# test_str('$type')
+test_dict()

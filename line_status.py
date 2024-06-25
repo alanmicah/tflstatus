@@ -57,6 +57,7 @@ def get_line_status_api(line_id):
   tfl_api = os.environ.get('TEST_TFL_KEY')
   tfl_app_id = os.environ.get('APP_ID')
   tfl_headers = {'app_id': tfl_app_id, 'app_key': tfl_api}
+
   url_with_custom_id = status_url.format(ids=line_id)
   r = requests.get(url_with_custom_id, headers=tfl_headers)
   data_lower = keys_to_lowercase_letters(r.json())
@@ -121,6 +122,9 @@ def upload_data(filename):
   finally:
     db.session.close()
 
+"""
+Format and create json file
+"""
 def open_format_json():
   line_status = open_json('line_status')
   data_lower = keys_to_lowercase_letters(line_status)
@@ -128,17 +132,32 @@ def open_format_json():
   with open('data/line_status_lower.json', 'w') as filehandle:
     json.dump(data_lower, filehandle)
 
+"""
+Get current status of line stored in db
+"""
 def get_status(line):
+  line = line.lower()
   try:
     with app.app_context(): # Ensure the application context is pushed
       lineTable = db.session.query(LineStatus)
   except Exception as e:
     print(e)
     return 'Failure'
-  if lineTable is not None:
-    line_db = db.session.get(LineStatus, line)
-    print(line_db.disruptions)
-    print(line_db.lastupdate)
+  try:
+    if lineTable is not None:
+      line_db = db.session.get(LineStatus, line)
+      print(bool(line_db.disruptions))
+      print(line_db.disruptions)
+      if bool(line_db.disruptions):     
+        disrupt_db = db.session.get(LineDisruptions, line)
+        if disrupt_db is not None:
+          affected_stops = disrupt_db.affectedstops.values()
+      else:
+        return None
+    return line_db.disruptions
+  except Exception as e:
+    print(e)
+    return 'Falied to get status'
 
 # The `if` statement Checks if this script is being run as the main program,
 # and so calls the functions below.
@@ -146,6 +165,6 @@ def get_status(line):
 # would not be executed automatically.
 if __name__ == '__main__':
     with app.app_context():  # Push the application context to the main script
-        get_status('dlr')
+        get_status()
         # upload_data('line_status_lower')
         # open_format_json()
