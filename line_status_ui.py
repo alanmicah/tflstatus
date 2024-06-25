@@ -1,6 +1,6 @@
 import flet as ft
 from flet import IconButton, Page, Row, TextField, icons
-import line_status
+from line_status import get_line_status
 
 import flet as ft
 
@@ -15,8 +15,10 @@ def main(page: ft.Page):
         t.value = f"Dropdown value is:  {dd.value}"
         txt_line = dd.value
 
-        choose_line(txt_line)
-
+        # choose_line(txt_line)
+        # status = get_line_status(txt_line.lower())
+        
+        t.value += f"\nStatus: {status}"
         page.update()
 
     t = ft.Text()
@@ -33,7 +35,7 @@ def main(page: ft.Page):
     page.add(dd, b, t)
 
     def choose_line(e):
-        line_status(txt_line.lower())
+        status = get_line_status(txt_line.lower())
         page.update()
     
     page.add(

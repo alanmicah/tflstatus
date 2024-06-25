@@ -7,10 +7,7 @@ from sqlalchemy import create_engine, inspect
 load_dotenv()
 
 disrupt_url = os.environ.get('TFL_URL_LINE_DISRUPTIONS')
-status_url = os.environ.get('TFL_URL_LINE_STATUS')
-tfl_api = os.environ.get('TEST_TFL_KEY')
-tfl_app_id = os.environ.get('APP_ID')
-tfl_headers = {'app_id': tfl_app_id, 'app_key': tfl_api}
+
 
 """
 Convert key names to lowercase letters
@@ -55,8 +52,12 @@ def open_json(filename):
 """
 Get line status
 """
-def get_line_status(api_url, line_id, tfl_headers):
-  url_with_custom_id = api_url.format(ids=line_id)
+def get_line_status_api(line_id):
+  status_url = os.environ.get('TFL_URL_LINE_STATUS')
+  tfl_api = os.environ.get('TEST_TFL_KEY')
+  tfl_app_id = os.environ.get('APP_ID')
+  tfl_headers = {'app_id': tfl_app_id, 'app_key': tfl_api}
+  url_with_custom_id = status_url.format(ids=line_id)
   r = requests.get(url_with_custom_id, headers=tfl_headers)
   data_lower = keys_to_lowercase_letters(r.json())
   create_json(data_lower, 'line_status')
@@ -127,6 +128,17 @@ def open_format_json():
   with open('data/line_status_lower.json', 'w') as filehandle:
     json.dump(data_lower, filehandle)
 
+def get_status(line):
+  try:
+    with app.app_context(): # Ensure the application context is pushed
+      lineTable = db.session.query(LineStatus)
+  except Exception as e:
+    print(e)
+    return 'Failure'
+  if lineTable is not None:
+    line_db = db.session.get(LineStatus, line)
+    print(line_db.disruptions)
+    print(line_db.lastupdate)
 
 # The `if` statement Checks if this script is being run as the main program,
 # and so calls the functions below.
@@ -134,5 +146,6 @@ def open_format_json():
 # would not be executed automatically.
 if __name__ == '__main__':
     with app.app_context():  # Push the application context to the main script
-        upload_data('line_status_lower')
+        get_status('dlr')
+        # upload_data('line_status_lower')
         # open_format_json()
