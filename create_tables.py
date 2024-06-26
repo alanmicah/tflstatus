@@ -31,7 +31,8 @@ def create_line_status_table():
         routesections JSON,
         servicetypes JSON,
         crowding JSON,
-        lastupdate TIMESTAMP
+        lastupdate TIMESTAMP,
+        FOREIGN KEY (disruptions) REFERENCES LINE_DISRUPTIONS(id)
         )
       """
     )

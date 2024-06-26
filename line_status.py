@@ -8,6 +8,21 @@ load_dotenv()
 
 disrupt_url = os.environ.get('TFL_URL_LINE_DISRUPTIONS')
 
+    
+"""
+Create json file
+"""
+def create_json(x, filename):
+  with open('data/'+filename+'.json', 'w') as filehandle:
+    json.dump(x, filehandle)
+
+"""
+Open and load json data
+"""
+def open_json(filename):
+  file_json = open('data/'+filename+'.json', 'r')
+  data_json = json.load(file_json)
+  return data_json
 
 """
 Convert key names to lowercase letters
@@ -33,21 +48,12 @@ def keys_to_lowercase_letters(obj):
         return [keys_to_lowercase_letters(item) for item in obj]
     else:
         return obj
-    
-"""
-Create json file
-"""
-def create_json(x, filename):
-  with open('data/'+filename+'.json', 'w') as filehandle:
-    json.dump(x, filehandle)
 
 """
-Open and load json data
+Create an ID for disruptions table
 """
-def open_json(filename):
-  file_json = open('data/'+filename+'.json', 'r')
-  data_json = json.load(file_json)
-  return data_json
+def create_id_key(descript):
+  return None
 
 """
 Get line status
@@ -68,6 +74,8 @@ def get_line_status_api(line_id):
 """
 Get line disruption data
 """
+# Should call if line_status.disruption is not empty
+# save up on API calls
 def get_line_disrupt(api_url, line_id, tfl_headers):
   url_with_line_id = api_url.format(ids=line_id)
   r = requests.get(url_with_line_id, headers=tfl_headers)
@@ -147,11 +155,14 @@ def get_status(line):
     if lineTable is not None:
       line_db = db.session.get(LineStatus, line)
       print(bool(line_db.disruptions))
-      print(line_db.disruptions)
+      print(type(line_db.disruptions))
+
       if bool(line_db.disruptions):     
         disrupt_db = db.session.get(LineDisruptions, line)
         if disrupt_db is not None:
           affected_stops = disrupt_db.affectedstops.values()
+      elif not line_db.disruptions:
+        print('Empty dic')
       else:
         return None
     return line_db.disruptions
@@ -165,6 +176,6 @@ def get_status(line):
 # would not be executed automatically.
 if __name__ == '__main__':
     with app.app_context():  # Push the application context to the main script
-        get_status()
+        get_status('dlr')
         # upload_data('line_status_lower')
         # open_format_json()
