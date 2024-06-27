@@ -56,6 +56,12 @@ def create_id_key(descript):
   return None
 
 """
+Flattening the dictionary from line status data
+"""
+def flatten_dict(dict_data):
+  return None
+
+"""
 Get line status
 """
 def get_line_status_api(line_id):
